@@ -56,17 +56,17 @@ sens_maps_testAll = np.transpose(sens_maps_testAll, (0, 3, 1, 2))
 all_ref_slices, all_input_slices, all_recon_slices = [], [], []
 
 print('\n  loading the saved model ...')
-tf.reset_default_graph()
-loadChkPoint = tf.train.latest_checkpoint(saved_model_dir)
-config = tf.ConfigProto()
+tf.compat.v1.reset_default_graph()
+loadChkPoint = tf.compat.v1.train.latest_checkpoint(saved_model_dir)
+config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth = True
 
-with tf.Session(config=config) as sess:
-    new_saver = tf.train.import_meta_graph(saved_model_dir + '/model_test.meta')
+with tf.compat.v1.Session(config=config) as sess:
+    new_saver = tf.compat.v1.train.import_meta_graph(saved_model_dir + '/model_test.meta')
     new_saver.restore(sess, loadChkPoint)
 
     # ..................................................................................................................
-    graph = tf.get_default_graph()
+    graph = tf.compat.v1.get_default_graph()
     nw_output = graph.get_tensor_by_name('nw_output:0')
     nw_kspace_output = graph.get_tensor_by_name('nw_kspace_output:0')
     mu_param = graph.get_tensor_by_name('mu:0')
