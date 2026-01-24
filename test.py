@@ -1,6 +1,8 @@
+import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
+
 import os
 import numpy as np
-import tensorflow as tf
 import scipy.io as sio
 import matplotlib.pyplot as plt
 import h5py as h5

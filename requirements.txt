@@ -1,9 +1,8 @@
-numpy==1.16.4
-scipy
-matplotlib
-scikit-image
+tensorflow==2.19.0
 h5py
-tensorflow==1.13.1
-tensorflow-gpu==1.13.1
-
-
+scikit-image
+pyfftw
+tqdm
+pyyaml
+opencv-python
+matplotlib
