@@ -15,20 +15,15 @@ def get_train_directory(args):
 
     """
 
-    if args.data_opt == 'Coronal_PD':
+    base = '/content/drive/MyDrive/AIMRIApplicationsFinalProject/SSDU/ssdu_prepared'
 
-        kspace_dir = '...'
-        coil_dir = '...'
+    if args.data_opt == 'Brain':
+        kspace_dir = os.path.join(base, 'brain_train_kspace.h5')
+        coil_dir   = os.path.join(base, 'brain_train_sens_maps.h5')
+        mask_dir   = os.path.join(base, 'brain_mask.mat')
+        return kspace_dir, coil_dir, mask_dir
 
-    elif args.data_opt == 'Coronal_PDFS':
-
-        kspace_dir = '...'
-        coil_dir = '...'
-
-    else:
-        raise ValueError('Invalid data option')
-
-    mask_dir = '...'
+    raise ValueError(f'Unknown data_opt: {args.data_opt}')
 
     print('\n kspace dir : ', kspace_dir, '\n \n coil dir :', coil_dir, '\n \n mask dir: ', mask_dir)
 
@@ -50,28 +45,25 @@ def get_test_directory(args):
     saved_model_dir : saved training model directory
 
     """
-    if args.data_opt == 'Coronal_PD':
+    base = '/content/drive/MyDrive/AIMRIApplicationsFinalProject/SSDU/ssdu_prepared'
 
-        kspace_dir = '...'
-        coil_dir = '...'
-        saved_model_dir = '../SSDU_Coronal_PD_100Epochs_Rate4_10Unrolls_GaussianSelection'
+    if args.data_opt == 'Brain':
+        kspace_dir = os.path.join(base, 'brain_test_kspace.h5')
+        coil_dir   = os.path.join(base, 'brain_test_sens_maps.h5')
+        mask_dir   = os.path.join(base, 'brain_mask.mat')
 
-    elif args.data_opt == 'Coronal_PDFS':
+        save_dir_root = '/content/drive/MyDrive/SSDU-brain/saved_models'
+        saved_model_dir = os.path.join(
+            save_dir_root,
+            'SSDU_' + args.data_opt + '_' + str(args.epochs) +
+            'Epochs_Rate' + str(args.acc_rate) + '_' +
+            str(args.nb_unroll_blocks) + 'Unrolls_' +
+            args.mask_type + 'Selection'
+        )
 
-        kspace_dir = '...'
-        coil_dir = '...'
-        saved_model_dir = '...'
+        return kspace_dir, coil_dir, mask_dir, saved_model_dir
 
-    else:
-        raise ValueError('Invalid data option')
-
-    mask_dir = '...'
-
-    print('\n kspace dir : ', kspace_dir, '\n \n coil dir :', coil_dir,
-          '\n \n mask dir: ', mask_dir, '\n \n saved model dir: ', saved_model_dir)
-
-    return kspace_dir, coil_dir, mask_dir, saved_model_dir
-
+    raise ValueError(f'Unknown data_opt: {args.data_opt}')
 
 def getSSIM(space_ref, space_rec):
     """
