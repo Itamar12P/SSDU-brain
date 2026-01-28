@@ -46,10 +46,10 @@ class ssdu_masks():
         loss_mask = np.zeros_like(input_mask)
         count = 0
 
-        while count <= np.int(np.ceil(np.sum(input_mask[:]) * self.rho)):
+        while count <= int(np.ceil(np.sum(input_mask[:]) * self.rho)):
 
-            indx = np.int(np.round(np.random.normal(loc=center_kx, scale=(nrow - 1) / std_scale)))
-            indy = np.int(np.round(np.random.normal(loc=center_ky, scale=(ncol - 1) / std_scale)))
+            indx = int(np.round(np.random.normal(loc=center_kx, scale=(nrow - 1) / std_scale)))
+            indy = int(np.round(np.random.normal(loc=center_ky, scale=(ncol - 1) / std_scale)))
 
             if (0 <= indx < nrow and 0 <= indy < ncol and temp_mask[indx, indy] == 1 and loss_mask[indx, indy] != 1):
                 loss_mask[indx, indy] = 1
@@ -75,7 +75,7 @@ class ssdu_masks():
 
         pr = np.ndarray.flatten(temp_mask)
         ind = np.random.choice(np.arange(nrow * ncol),
-                               size=np.int(np.count_nonzero(pr) * self.rho), replace=False, p=pr / np.sum(pr))
+                               size=int(np.count_nonzero(pr) * self.rho), replace=False, p=pr / np.sum(pr))
 
         [ind_x, ind_y] = utils.index_flatten2nd(ind, (nrow, ncol))
 
