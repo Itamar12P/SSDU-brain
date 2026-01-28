@@ -54,7 +54,7 @@ def tf_complex2real(input_data):
 
     """
 
-    return tf.stack([tf.real(input_data), tf.imag(input_data)], axis=-1)
+    return tf.stack([tf.math.real(input_data), tf.math.imag(input_data)], axis=-1)
 
 
 def tf_real2complex(input_data):
