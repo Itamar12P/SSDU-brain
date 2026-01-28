@@ -1,5 +1,5 @@
 import numpy as np
-from skimage.measure import compare_ssim
+from skimage.metrics import structural_similarity as compare_ssim
 
 
 def get_train_directory(args):
