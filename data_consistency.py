@@ -30,7 +30,7 @@ class data_consistency():
             kspace = tf_utils.tf_fftshift(tf.signal.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
             masked_kspace = kspace * self.mask
             image_space_coil_imgs = tf_utils.tf_ifftshift(tf.signal.ifft2d(tf_utils.tf_fftshift(masked_kspace))) * self.scalar
-            image_space_comb = tf.reduce_sum(image_space_coil_imgs * tf.conj(self.sens_maps), axis=0)
+            image_space_comb = tf.cast(tf.reduce_sum(image_space_coil_imgs * tf.math.conj(self.sens_maps), axis=0), tf.float32)
 
             ispace = image_space_comb + mu * img
 
@@ -89,19 +89,20 @@ def conj_grad(input_elems, mu_param):
     def body(i, rsold, x, r, p, mu):
         with tf.name_scope('CGIters'):
             Ap = Encoder.EhE_Op(p, mu)
-            alpha = tf.complex(rsold / tf.cast(tf.reduce_sum(tf.conj(p, tf.float32) * Ap)), 0.)
+            den = tf.cast(tf.reduce_sum(tf.math.conj(p) * Ap), tf.float32)
+            alpha = tf.complex(rsold / den, 0.0)
             x = x + alpha * p
             r = r - alpha * Ap
-            rsnew = tf.cast(tf.reduce_sum(tf.conj(r, tf.float32) * r))
+            rsnew = tf.cast(tf.reduce_sum(tf.math.conj(r) * r), tf.float32)
             beta = rsnew / rsold
-            beta = tf.complex(beta, 0.)
+            beta = tf.complex(beta, 0.0)
             p = r + beta * p
 
         return i + 1, rsnew, x, r, p, mu
 
     x = tf.zeros_like(rhs)
     i, r, p = 0, rhs, rhs
-    rsold = tf.cast(tf.reduce_sum(tf.conj(r, tf.float32) * r), )
+    rsold = tf.cast(tf.reduce_sum(tf.math.conj(r) * r), tf.float32)
     loop_vars = i, rsold, x, r, p, mu_param
     cg_out = tf.while_loop(cond, body, loop_vars, name='CGloop', parallel_iterations=1)[2]
 
