@@ -36,6 +36,15 @@ test_mask = np.complex64(np.tile(original_mask[np.newaxis, :, :], (nSlices, 1, 1
 
 print('\n size of kspace: ', kspace_test.shape, ', maps: ', sens_maps_testAll.shape, ', mask: ', test_mask.shape)
 
+# infer global dims from test data so they match exactly
+nSlices, nrow_data, ncol_data, ncoil_data = kspace_test.shape
+print("Using data shapes for globals in TEST:",
+      "nrow_GLOB =", nrow_data, "ncol_GLOB =", ncol_data, "ncoil_GLOB =", ncoil_data)
+
+args.nrow_GLOB  = nrow_data
+args.ncol_GLOB  = ncol_data
+args.ncoil_GLOB = ncoil_data
+
 # %%  zeropadded outer edges of k-space with no signal- check github readme file for explanation for further explanations
 # for coronal PD dataset, first 17 and last 16 columns of k-space has no signal
 # in the training mask we set corresponding columns as 1 to ensure data consistency
