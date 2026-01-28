@@ -89,11 +89,11 @@ def conj_grad(input_elems, mu_param):
     def body(i, rsold, x, r, p, mu):
         with tf.name_scope('CGIters'):
             Ap = Encoder.EhE_Op(p, mu)
-            den = tf.cast(tf.reduce_sum(tf.math.conj(p) * Ap), tf.float32)
+            den = tf.math.real(tf.reduce_sum(tf.math.conj(p) * Ap), tf.float32)
             alpha = tf.complex(rsold / den, 0.0)
             x = x + alpha * p
             r = r - alpha * Ap
-            rsnew = tf.cast(tf.reduce_sum(tf.math.conj(r) * r), tf.float32)
+            rsnew = tf.math.real(tf.reduce_sum(tf.math.conj(r) * r), tf.float32)
             beta = rsnew / rsold
             beta = tf.complex(beta, 0.0)
             p = r + beta * p
@@ -102,7 +102,7 @@ def conj_grad(input_elems, mu_param):
 
     x = tf.zeros_like(rhs)
     i, r, p = 0, rhs, rhs
-    rsold = tf.cast(tf.reduce_sum(tf.math.conj(r) * r), tf.float32)
+    rsold = tf.math.real(tf.reduce_sum(tf.math.conj(r) * r), tf.float32)
     loop_vars = i, rsold, x, r, p, mu_param
     cg_out = tf.while_loop(cond, body, loop_vars, name='CGloop', parallel_iterations=1)[2]
 
