@@ -54,11 +54,23 @@ for ii in range(np.shape(kspace_train)[0]):
     kspace_train[ii, :, :, :] = kspace_train[ii, :, :, :] / np.max(np.abs(kspace_train[ii, :, :, :][:]))
 
 print('\n size of kspace: ', kspace_train.shape, ', maps: ', sens_maps.shape, ', mask: ', original_mask.shape)
+
+nSlices, nrow_data, ncol_data, ncoil_data = kspace_train.shape
+print("Using data shapes for globals:",
+      "nrow_GLOB =", nrow_data, "ncol_GLOB =", ncol_data, "ncoil_GLOB =", ncoil_data)
+
+args.nrow_GLOB  = nrow_data
+args.ncol_GLOB  = ncol_data
+args.ncoil_GLOB = ncoil_data
+
 nSlices, *_ = kspace_train.shape
 trn_mask, loss_mask = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64), \
                       np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
 
-nw_input = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
+trn_mask, loss_mask = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64), \
+                      np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
+
+nw_input  = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB), dtype=np.complex64)
 ref_kspace = np.empty((nSlices, args.nrow_GLOB, args.ncol_GLOB, args.ncoil_GLOB), dtype=np.complex64)
 
 print('\n create training and loss masks and generate network inputs... ')
