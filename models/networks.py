@@ -71,7 +71,7 @@ def mu_param():
     Penalty parameter used in DC units, x = (E^h E + \mu I)^-1 (E^h y + \mu * z)
     """
 
-    with tf.compat.v1.variable_scope(tf.compat.v1.get_variable_scope(), reuse=tf.AUTO_REUSE):
+    with tf.compat.v1.variable_scope(tf.compat.v1.get_variable_scope(), reuse=tf.compat.v1.AUTO_REUSE):
         mu = tf.compat.v1.get_variable(name='mu', dtype=tf.float32, initializer=.05)
 
     return mu
