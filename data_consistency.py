@@ -30,7 +30,7 @@ class data_consistency():
             kspace = tf_utils.tf_fftshift(tf.signal.fft2d(tf_utils.tf_ifftshift(coil_imgs))) / self.scalar
             masked_kspace = kspace * self.mask
             image_space_coil_imgs = tf_utils.tf_ifftshift(tf.signal.ifft2d(tf_utils.tf_fftshift(masked_kspace))) * self.scalar
-            image_space_comb = tf.cast(tf.reduce_sum(image_space_coil_imgs * tf.math.conj(self.sens_maps), axis=0), tf.float32)
+            image_space_comb = tf.reduce_sum(image_space_coil_imgs * tf.math.conj(self.sens_maps), axis=0)
 
             ispace = image_space_comb + mu * img
 
