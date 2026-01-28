@@ -16,7 +16,7 @@ def get_train_directory(args):
 
     """
 
-    base = '/content/drive/MyDrive/AIMRIApplicationsFinalProject/SSDU/ssdu_prepared'
+    base = '/content/drive/MyDrive/AIMRIApplicationsFinalProject/SSDU-brain/ssdu_prepared'
 
     if args.data_opt == 'Brain':
         kspace_dir = os.path.join(base, 'brain_train_kspace.h5')
@@ -46,14 +46,14 @@ def get_test_directory(args):
     saved_model_dir : saved training model directory
 
     """
-    base = '/content/drive/MyDrive/AIMRIApplicationsFinalProject/SSDU/ssdu_prepared'
+    base = '/content/drive/MyDrive/AIMRIApplicationsFinalProject/SSDU-brain/ssdu_prepared'
 
     if args.data_opt == 'Brain':
         kspace_dir = os.path.join(base, 'brain_test_kspace.h5')
         coil_dir   = os.path.join(base, 'brain_test_sens_maps.h5')
         mask_dir   = os.path.join(base, 'brain_mask.mat')
 
-        save_dir_root = '/content/drive/MyDrive/SSDU-brain/saved_models'
+        save_dir_root = '/content/drive/MyDrive/AIMRIApplicationsFinalProject/SSDU-brain/saved_models'
         saved_model_dir = os.path.join(
             save_dir_root,
             'SSDU_' + args.data_opt + '_' + str(args.epochs) +
