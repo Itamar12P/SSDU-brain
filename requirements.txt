@@ -1,4 +1,4 @@
-tensorflow==2.19.0
+tensorflow[and-cuda]==2.19.0
 h5py
 scikit-image
 pyfftw
