@@ -119,7 +119,7 @@ dataset = tf.data.Dataset.from_tensor_slices((kspaceP, nw_inputP, sens_mapsP, tr
 dataset = dataset.shuffle(buffer_size=10 * args.batchSize)
 dataset = dataset.batch(args.batchSize)
 dataset = dataset.prefetch(args.batchSize)
-iterator = dataset.make_initializable_iterator()
+iterator = tf.compat.v1.data.make_initializable_iterator(dataset)
 ref_kspace_tensor, nw_input_tensor, sens_maps_tensor, trn_mask_tensor, loss_mask_tensor = iterator.get_next('getNext')
 
 # %% make training model
