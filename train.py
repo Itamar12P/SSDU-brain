@@ -159,7 +159,7 @@ with tf.compat.v1.Session(config=config) as sess:
         except tf.errors.OutOfRangeError:
             pass
 
-        if (np.mod(ep, 1) == 0):
+        if (np.mod(ep, 10) == 0):
             saver.save(sess, sess_trn_filename, global_step=ep)
             sio.savemat(os.path.join(directory, 'TrainingLog.mat'), {'loss': totalLoss})
 
