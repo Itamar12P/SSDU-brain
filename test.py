@@ -87,7 +87,7 @@ with tf.compat.v1.Session(config=config) as sess:
     loss_maskP = graph.get_tensor_by_name('loss_mask:0')
     nw_inputP = graph.get_tensor_by_name('nw_input:0')
     sens_mapsP = graph.get_tensor_by_name('sens_maps:0')
-    weights = sess.run(tf.global_variables())
+    weights = sess.run(tf.compat.v1.global_variables())
 
     for ii in range(nSlices):
 
