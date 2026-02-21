@@ -160,7 +160,7 @@ sio.savemat('ssdu_brain_results.mat', output_dict)
 print("-> Saved raw reconstruction arrays to 'ssdu_brain_results.mat'")
 
 # 3. Save Visual Plot (so you can download and view it)
-slice_num = min(5, nSlices - 1) # Safely pick a slice (e.g., slice 5)
+slice_num = 19
 plt.figure(figsize=(15, 5))
 
 plt.subplot(1, 3, 1)
