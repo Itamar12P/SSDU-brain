@@ -10,6 +10,9 @@ import time
 import utils
 import parser_ops
 
+from skimage.metrics import structural_similarity as ssim
+from skimage.metrics import peak_signal_noise_ratio as psnr
+
 parser = parser_ops.get_parser()
 args = parser.parse_args()
 
@@ -122,9 +125,60 @@ with tf.compat.v1.Session(config=config) as sess:
 
         print('\n Iteration: ', ii, 'elapsed time %f seconds' % toc)
 
-plt.figure()
-slice_num = 5
-plt.subplot(1, 3, 1), plt.imshow(np.abs(all_ref_slices[slice_num]), cmap='gray'), plt.title('ref')
-plt.subplot(1, 3, 2), plt.imshow(np.abs(all_input_slices[slice_num]), cmap='gray'), plt.title('input')
-plt.subplot(1, 3, 3), plt.imshow(np.abs(all_recon_slices[slice_num]), cmap='gray'), plt.title('recon')
-plt.show()
+# Convert lists to numpy arrays
+all_recon_slices = np.asarray(all_recon_slices)
+all_ref_slices = np.asarray(all_ref_slices)
+all_input_slices = np.asarray(all_input_slices)
+
+# 1. Evaluate Quantitative Metrics
+mean_ssim = 0
+mean_psnr = 0
+for i in range(nSlices):
+    # Calculate data range for metrics
+    d_range = all_ref_slices[i].max() - all_ref_slices[i].min()
+    
+    mean_ssim += ssim(all_ref_slices[i], all_recon_slices[i], data_range=d_range)
+    mean_psnr += psnr(all_ref_slices[i], all_recon_slices[i], data_range=d_range)
+
+mean_ssim /= nSlices
+mean_psnr /= nSlices
+
+print(f"\n" + "="*40)
+print(f"       EVALUATION RESULTS (Brain MRI)")
+print(f"="*40)
+print(f"Average PSNR: {mean_psnr:.2f} dB")
+print(f"Average SSIM: {mean_ssim:.4f}")
+print(f"="*40 + "\n")
+
+# 2. Save Numerical Data (for MATLAB or Python analysis locally)
+output_dict = {
+    'reconstruction': all_recon_slices,
+    'reference': all_ref_slices,
+    'input_undersampled': all_input_slices
+}
+sio.savemat('ssdu_brain_results.mat', output_dict)
+print("-> Saved raw reconstruction arrays to 'ssdu_brain_results.mat'")
+
+# 3. Save Visual Plot (so you can download and view it)
+slice_num = min(5, nSlices - 1) # Safely pick a slice (e.g., slice 5)
+plt.figure(figsize=(15, 5))
+
+plt.subplot(1, 3, 1)
+plt.imshow(all_input_slices[slice_num], cmap='gray')
+plt.title('Undersampled Input')
+plt.axis('off')
+
+plt.subplot(1, 3, 2)
+plt.imshow(all_recon_slices[slice_num], cmap='gray')
+slice_psnr = psnr(all_ref_slices[slice_num], all_recon_slices[slice_num], data_range=all_ref_slices[slice_num].max()-all_ref_slices[slice_num].min())
+plt.title(f'SSDU Recon (PSNR: {slice_psnr:.2f})')
+plt.axis('off')
+
+plt.subplot(1, 3, 3)
+plt.imshow(all_ref_slices[slice_num], cmap='gray')
+plt.title('Reference (Fully Sampled)')
+plt.axis('off')
+
+plt.tight_layout()
+plt.savefig('reconstruction_preview.png', bbox_inches='tight', dpi=150)
+print("-> Saved preview image to 'reconstruction_preview.png'")
