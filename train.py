@@ -130,7 +130,23 @@ loss = tf.multiply(scalar, tf.norm(ref_kspace_tensor - nw_output_kspace) / tf.no
 
 all_trainable_vars = tf.reduce_sum([tf.reduce_prod(v.shape) for v in tf.compat.v1.trainable_variables()])
 update_ops = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)
-optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=args.learning_rate).minimize(loss)
+
+# Instead of using optimizer.minimize(loss) directly, we split it into three steps:
+# 1. Compute gradients
+# 2. Clip gradients to prevent explosion
+# 3. Apply the clipped gradients
+
+optimizer_obj = tf.compat.v1.train.AdamOptimizer(learning_rate=args.learning_rate)
+
+# Step 1: Compute gradients for all trainable variables
+gvs = optimizer_obj.compute_gradients(loss)
+
+# Step 2: Clip gradients. We use clip_by_value to ensure no gradient component 
+# exceeds 1.0 or falls below -1.0. This prevents the "billions" in cost seen in Epoch 88.
+capped_gvs = [(tf.clip_by_value(grad, -1.0, 1.0), var) for grad, var in gvs if grad is not None]
+
+# Step 3: Apply the clipped gradients to update model weights
+optimizer = optimizer_obj.apply_gradients(capped_gvs)
 
 saver = tf.compat.v1.train.Saver(max_to_keep=100)
 sess_trn_filename = os.path.join(directory, 'model')
@@ -164,9 +180,6 @@ with tf.compat.v1.Session(config=config) as sess:
             sio.savemat(os.path.join(directory, 'TrainingLog.mat'), {'loss': totalLoss})
 
 end_time = time.time()
-
-# FORCE A FINAL SAVE WHEN TRAINING COMPLETES
-saver.save(sess, sess_trn_filename, global_step=ep)
 sio.savemat(os.path.join(directory, 'TrainingLog.mat'), {'loss': totalLoss})
 
 print('Training completed in  ', ((end_time - start_time) / 60), ' minutes')
